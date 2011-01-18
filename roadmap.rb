@@ -26,6 +26,7 @@ class ShowVersion
   end
 
   def execute
+    STDERR.puts "#{$0}:Not implemented yet."
   end
 end
 
@@ -35,6 +36,7 @@ class AddTask
   end
 
   def execute
+    STDERR.puts "#{$0}:Not implemented yet."
   end
 end
 # }}}
