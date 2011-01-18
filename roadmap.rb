@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
+require 'optparse'
 
 # Configuration wrapper {{{1
 class ConfigValueNotFoundError < RuntimeError
@@ -100,8 +101,6 @@ class AddTask
 end
 # }}}
 
-require 'optparse'
-
 options = { }
 optparse = OptionParser.new do |o|
   options[:file] = conf.of("file")
@@ -109,7 +108,7 @@ optparse = OptionParser.new do |o|
   options[:action] = nil
   o.on("--get VERSION", "List a tasks for version") do |v|
     if not options[:action].nil?
-      STDERR.puts "Please specify zero or one of --get, --add-task"
+      STDERR.puts "#{$0}:Please specify zero or one of --get, --add-task"
       exit 1
     end
     options[:action] = ShowVersion.new(options, v)
@@ -119,7 +118,7 @@ optparse = OptionParser.new do |o|
     input = t.split(".")
     version, task = input[0..-2].join("."), input[-1]
     if not options[:action].nil?
-      STDERR.puts "Please specify zero or one of --get, --add-task"
+      STDERR.puts "#{$0}:Please specify zero or one of --get, --add-task"
       exit 1
     end
     options[:action] = AddTask.new(options, version, task)
