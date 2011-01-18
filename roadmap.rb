@@ -16,7 +16,12 @@ conf = Configuration.new
 
 # Actions {{{1
 class ShowAll
+  def initialize(options)
+    @options = options
+  end
+
   def execute
+    system("git show -p #{@options[:branch]}:#{@options[:file]}")
   end
 end
 
@@ -47,7 +52,7 @@ options = { }
 optparse = OptionParser.new do |o|
   options[:file] = conf.of("file")
   options[:branch] = conf.of("branch")
-  options[:actions] = [ShowAll.new]
+  options[:actions] = [ShowAll.new(options)]
   o.on("--get VERSION", "List a tasks for version") do |v|
     options[:actions].push(ShowVersion.new(v))
   end
