@@ -50,7 +50,14 @@ class ShowAll
   end
 
   def execute
-    system("git show -p #{@options[:branch]}:#{@options[:file]}")
+    roadmap = YAML::load(`git show -p #{@options[:branch]}:#{@options[:file]}`)
+    roadmap.each_key do |k|
+      puts "#{k}:"
+      roadmap[k].each do |t|
+        puts " - #{t}"
+      end
+      puts
+    end
   end
 end
 
