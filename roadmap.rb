@@ -63,4 +63,6 @@ optparse = OptionParser.new do |o|
   end
 end.parse!
 
+options[:actions].each { |a| a.execute }
+
 # vim: foldmethod=marker
