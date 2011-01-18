@@ -6,7 +6,10 @@ end
 
 class Configuration
   def initialize
-    @memoized = { }
+    @memoized = {
+      "file" => "ROADMAP",
+      "branch" => "napkin"
+    }
   end
 
   def of(param, default = nil)
