@@ -53,7 +53,8 @@ class ShowAll
 end
 
 class ShowVersion
-  def initialize(version)
+  def initialize(options, version)
+    @options = options
     @version = version
   end
 
@@ -63,7 +64,8 @@ class ShowVersion
 end
 
 class AddTask
-  def initialize(version, text)
+  def initialize(options, version, text)
+    @options = options
     @version, @text = version, text
   end
 
@@ -81,12 +83,12 @@ optparse = OptionParser.new do |o|
   options[:branch] = conf.of("branch")
   options[:actions] = [ShowAll.new(options)]
   o.on("--get VERSION", "List a tasks for version") do |v|
-    options[:actions].push(ShowVersion.new(v))
+    options[:actions].push(ShowVersion.new(options, v))
   end
 
   o.on("--add-task VERSION.TASK", "Add a task to a version") do |t|
     version, task = t.split(".")
-    options[:actions].push(AddTask.new(version, task))
+    options[:actions].push(AddTask.new(options, version, task))
   end
 end.parse!
 
