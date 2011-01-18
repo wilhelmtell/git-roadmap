@@ -91,7 +91,8 @@ optparse = OptionParser.new do |o|
   end
 
   o.on("--add-task VERSION.TASK", "Add a task to a version") do |t|
-    version, task = t.split(".")
+    input = t.split(".")
+    version, task = input[0..-2].join("."), input[-1]
     if not options[:action].nil?
       STDERR.puts "Please specify zero or one of --get, --add-task"
       exit 1
