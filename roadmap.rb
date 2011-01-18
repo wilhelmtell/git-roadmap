@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'yaml'
+
 # Configuration wrapper {{{1
 class ConfigValueNotFoundError < RuntimeError
 end
@@ -70,7 +72,19 @@ class AddTask
   end
 
   def execute
-    STDERR.puts "#{$0}:Not implemented yet."
+    roadmap = YAML::load(`git show -p #{@options[:branch]}:#{@options[:file]}`)
+    roadmap ||= { }
+    roadmap[@version] ||= [ ]
+    roadmap[@version].push(@text)
+    system("git stash -q")
+    system("git checkout -q #{@options[:branch]}")
+    File.open(@options[:file], "w") do |f|
+      f.write(YAML::dump(roadmap))
+    end
+    system("git add #{@options[:file]}")
+    system("git commit -q -m'updated roadmap'")
+    system("git checkout -q -")
+    system("git stash pop -q")
   end
 end
 # }}}
