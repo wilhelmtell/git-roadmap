@@ -1,15 +1,39 @@
 #!/usr/bin/env ruby
 
 # Configuration wrapper {{{1
+class ConfigValueNotFoundError < RuntimeError
+end
+
 class Configuration
   def initialize
     @memoized = { }
   end
 
-  def of(param)
+  def of(param, default = nil)
     param = param.downcase
-    @memoized[param] ||= ENV["GIT_ROADMAP_#{param.upcase}"] ||
-                         `git config --get roadmap.#{param}`
+    return @memoized[param] if @memoized.include? param
+    return from_environment(param) rescue nil
+    return from_git_config(param) rescue nil
+    return default
+  end
+
+  private
+  def from_environment(param)
+    environment_variable = ENV["GIT_ROADMAP_#{param.upcase}"]
+    unless environment_variable.nil?
+      @memoized[param] = environment_variable
+      return @memoized[param]
+    end
+    raise ConfigValueNotFoundError
+  end
+
+  def from_git_config(param)
+    git_config = `git config --get roadmap.#{param}`
+    if $?.exitstatus == 0
+      @memoized = git_config
+      return git_config
+    end
+    raise ConfigValueNotFoundError
   end
 end
 conf = Configuration.new
