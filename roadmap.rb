@@ -68,7 +68,11 @@ class ShowVersion
   end
 
   def execute
-    STDERR.puts "#{$0}:Not implemented yet."
+    roadmap = YAML::load(`git show -p #{@options[:branch]}:#{@options[:file]}`)
+    puts "#{@version}:"
+    roadmap[@version].each do |t|
+      puts " - #{t}"
+    end
   end
 end
 
