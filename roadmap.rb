@@ -81,17 +81,26 @@ options = { }
 optparse = OptionParser.new do |o|
   options[:file] = conf.of("file")
   options[:branch] = conf.of("branch")
-  options[:actions] = [ShowAll.new(options)]
+  options[:action] = nil
   o.on("--get VERSION", "List a tasks for version") do |v|
-    options[:actions].push(ShowVersion.new(options, v))
+    if not options[:action].nil?
+      STDERR.puts "Please specify zero or one of --get, --add-task"
+      exit 1
+    end
+    options[:action] = ShowVersion.new(options, v)
   end
 
   o.on("--add-task VERSION.TASK", "Add a task to a version") do |t|
     version, task = t.split(".")
-    options[:actions].push(AddTask.new(options, version, task))
+    if not options[:action].nil?
+      STDERR.puts "Please specify zero or one of --get, --add-task"
+      exit 1
+    end
+    options[:action] = AddTask.new(options, version, task)
   end
 end.parse!
+options[:action] ||= ShowAll.new(options)
 
-options[:actions].each { |a| a.execute }
+options[:action].execute
 
 # vim: foldmethod=marker
